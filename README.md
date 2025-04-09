@@ -7,14 +7,14 @@ This project was built as part of an academic activity for `MO-IT152 | IPT`, foc
 
 ## Features:
 
-- User registration and login
-- Create and manage posts
-- Like and comment on posts
-- Follow/unfollow users
-- Secure authentication (with HTTPS & password hashing)
-- Role-Based Access Control (RBAC)
-- Protected API endpoints with token-based access
-- REST API for frontend or mobile integration
+- User registration, login, and Google OAuth integration
+- Create, update, and delete posts
+- Like posts and comments
+- Follow/unfollow other users
+- Paginated news feed (sorted by date)
+- Secure authentication with token-based access
+- Role-Based Access Control (RBAC) and protected endpoints
+- Fully functional REST API for frontend/mobile integration
 
 ---
 
@@ -22,8 +22,10 @@ This project was built as part of an academic activity for `MO-IT152 | IPT`, foc
 
 - **Backend**: Django (Python)
 - **API**: Django REST Framework
-- **Database**: SQLite (development)
+- **Authentication:** Token-based auth + Google OAuth (via `dj-rest-auth`, `allauth`)
+- **Database**: SQLite (for development)
 - **Security**: HTTPS (via self-signed certificate), password encryption, RBAC
+- **Tools:** Postman for API testing, GitHub for version control
 
 ---
 
@@ -39,5 +41,6 @@ Clone the repo:
 
 ## Author:
 
-Vivienne Rose Rates
-IPT-S3101
+Vivienne Rose Rates  
+IPT-S3101  
+***"Just me and my code, trying to get along — and maybe solo the backend too."***
