@@ -21,6 +21,11 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls')),
+    # Authentication routes
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/registration/', include('dj_rest_auth.registration.urls')),
+    # Google OAuth callback URLs
+    path('posts/auth/social/google', include('allauth.socialaccount.urls')),
 ]
 
 

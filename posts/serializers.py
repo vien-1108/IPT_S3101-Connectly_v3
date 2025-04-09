@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Post, Comment
+from .models import User, Post, Comment, Like
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -8,28 +8,34 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'created_at']
 
 
-class PostSerializer(serializers.ModelSerializer):
-    comments = serializers.StringRelatedField(many=True, read_only=True)
-
-
-    class Meta:
-        model = Post
-        fields = ['id', 'content', 'author', 'created_at', 'comments']
-
-
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author', 'post', 'created_at']
+        fields = ['id', 'author', 'post', 'text', 'created_at']
+        read_only_fields = ['author', 'created_at']
 
-
-    def validate_post(self, value):
-        if not Post.objects.filter(id=value.id).exists():
-            raise serializers.ValidationError("Post not found.")
+    def validate_text(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Comment text cannot be empty.")
         return value
 
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['id', 'user', 'post', 'created_at']
+        read_only_fields = ['user', 'created_at']
 
-    def validate_author(self, value):
-        if not User.objects.filter(id=value.id).exists():
-            raise serializers.ValidationError("Author not found.")
-        return value
+
+class PostSerializer(serializers.ModelSerializer):
+    # like_count = serializers.SerializerMethodField()
+    # comment_count = serializers.SerializerMethodField()
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'content', 'image', 'post_type', 'metadata', 'author', 'created_at']
+        read_only_fields = ['author', 'created_at']
+
+    def get_like_count(self, obj):
+        return obj.likes.count()
+
+    def get_comment_count(self, obj):
+        return obj.comments.count()
