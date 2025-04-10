@@ -13,6 +13,7 @@ from .factories import PostFactory
 from .authentication import CsrfExemptTokenAuthentication
 from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from django.db.models import Q
 
 
 
@@ -121,11 +122,15 @@ class PostDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        post = Post.objects.get(pk=pk)
-        if post.author != request.user:
-            raise PermissionDenied("You are not allowed to access this post.")
-        return Response({"content": post.content})
-    
+        post = Post.objects.filter(id=pk).first()
+        if not post:
+            return Response({'error': 'Post not found'}, status=404)
+
+        if post.privacy == 'private' and post.author != request.user:
+            raise PermissionDenied("You are not allowed to view this private post.")
+
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
 
 class LikePostView(APIView):
     authentication_classes = [CsrfExemptTokenAuthentication]
@@ -169,6 +174,26 @@ class CommentsForPostView(APIView):
     
 
 class NewsFeedView(ListAPIView):
-    queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Post.objects.filter(
+            Q(privacy='public') | Q(author=user)
+        ).order_by('-created_at').select_related('author')
+
+
+class PostDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        post = Post.objects.filter(id=pk).first()
+        if not post:
+            return Response({'error': 'Post not found'}, status=404)
+
+        if request.user.role != 'admin':
+            raise PermissionDenied("Only admins can delete posts.")
+
+        post.delete()
+        return Response({'message': 'Post deleted successfully'})

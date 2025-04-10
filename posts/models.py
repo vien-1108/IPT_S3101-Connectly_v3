@@ -3,9 +3,14 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('user', 'User'),
+    ]
+
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
 
     def __str__(self):
         return self.username
@@ -30,6 +35,13 @@ class Post(models.Model):
 
     def __str__(self):
         return f"{self.post_type.capitalize()} post by {self.author.username} at {self.created_at}"
+    
+    PRIVACY_CHOICES = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+    ]
+
+    privacy = models.CharField(max_length=10, choices=PRIVACY_CHOICES, default='public')
 
 
 class Comment(models.Model):
