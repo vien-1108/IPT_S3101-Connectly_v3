@@ -16,6 +16,10 @@ This project was built as part of an academic activity for `MO-IT152 | IPT`, foc
 - Role-Based Access Control (RBAC) and protected endpoints
 - Fully functional REST API for frontend/mobile integration
 
+
+Tested with multiple users and edge cases using Postman.  
+All endpoints follow strict token-based access control.
+
 ---
 
 ## Tech Stack:
@@ -37,10 +41,18 @@ Clone the repo:
    cd IPT_S3101-Connectly_v3
   ```
 
+Make sure to install dependencies and run migrations:
+   ```bash
+   pip install -r requirements.txt
+   python manage.py makemigrations
+   python manage.py migrate
+   python manage.py runserver
+  ```
+
 ---
 
 ## Author:
 
 Vivienne Rose Rates  
-IPT-S3101  
+IPT-S3101 | lone_dev  
 ***"Just me and my code, trying to get along — and maybe solo the backend too."***
